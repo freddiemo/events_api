@@ -17,7 +17,7 @@ type Database struct {
 }
 
 func NewDatabase() (*Database, error) {
-	dataSourceName := "host=" + DB_HOST + " port=" + DB_PORT + " user=youruser password=yourpassword dbname=youreventdb sslmode=disable"
+	dataSourceName := "host=" + DB_HOST + " port=" + DB_PORT + " user=postgres password=postgres dbname=events sslmode=disable"
 	db, err := sql.Open(DB_DRIVER, dataSourceName)
 
 	return &Database{DB: db}, err

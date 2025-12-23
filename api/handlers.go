@@ -32,6 +32,7 @@ func (eventHandler *eventHandler) GetEvents(w http.ResponseWriter, r *http.Reque
 	events, err := eventHandler.eventService.GetEvents()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	eventsJSON, _ := json.Marshal(events)
