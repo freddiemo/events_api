@@ -1,16 +1,17 @@
 package api
 
 import (
+	"encoding/json"
 	"net/http"
 
-	"github.com/freddiemo/events_api/internal/models"
 	"github.com/freddiemo/events_api/internal/service"
+	"github.com/freddiemo/events_api/models"
 )
 
 type EventHandler interface {
-	CreateEvent(event *models.Event) error
-	GetEvents() ([]*models.Event, error)
-	GetEventByID(id int) (*models.Event, error)
+	CreateEvent(w http.ResponseWriter, r *http.Request) error
+	GetEvents(w http.ResponseWriter, r *http.Request)
+	GetEventByID(w http.ResponseWriter, r *http.Request, id int) (*models.Event, error)
 }
 
 type eventHandler struct {
@@ -18,7 +19,7 @@ type eventHandler struct {
 	httpHandler  http.Handler
 }
 
-func NewEventHandler(eventService service.EventService, httpHandler HTTPHandler) EventHandler {
+func NewEventHandler(eventService service.EventService, httpHandler http.Handler) EventHandler {
 	return &eventHandler{eventService: eventService, httpHandler: httpHandler}
 }
 
@@ -27,9 +28,15 @@ func (eventHandler *eventHandler) CreateEvent(w http.ResponseWriter, r *http.Req
 	return nil
 }
 
-func (eventHandler *eventHandler) GetEvents(w http.ResponseWriter, r *http.Request) ([]*models.Event, error) {
-	// Implementation for handling requests to get events
-	return nil, nil
+func (eventHandler *eventHandler) GetEvents(w http.ResponseWriter, r *http.Request) {
+	events, err := eventHandler.eventService.GetEvents()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	eventsJSON, _ := json.Marshal(events)
+	w.Write(eventsJSON)
+	w.WriteHeader(http.StatusOK)
 }
 
 func (eventHandler *eventHandler) GetEventByID(w http.ResponseWriter, r *http.Request, id int) (*models.Event, error) {

@@ -1,7 +1,8 @@
 package service
 
 import (
-	"github.com/freddiemo/events_api/internal/service/eventRepository"
+	"github.com/freddiemo/events_api/internal/repository"
+	"github.com/freddiemo/events_api/models"
 )
 
 type EventService interface {
@@ -11,10 +12,10 @@ type EventService interface {
 }
 
 type eventService struct {
-	eventRepo eventRepository.EventRepository
+	eventRepo repository.EventRepository
 }
 
-func newEventService(eventRepo eventRepository.EventRepository) EventService {
+func NewEventService(eventRepo repository.EventRepository) EventService {
 	return &eventService{eventRepo: eventRepo}
 }
 
@@ -25,7 +26,7 @@ func (eventService *eventService) CreateEvent(event *models.Event) error {
 
 func (eventService *eventService) GetEvents() ([]*models.Event, error) {
 	// Implementation for retrieving events
-	return nil, nil
+	return eventService.eventRepo.GetEvents()
 }
 
 func (eventService *eventService) GetEventByID(id int) (*models.Event, error) {

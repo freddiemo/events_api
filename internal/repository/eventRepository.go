@@ -1,9 +1,11 @@
-package database
+package repository
 
 import (
-	"github.com/freddiemo/events_api/internal/models"
+	"fmt"
+	"log"
 
-	"github.com/freddiemo/events_api/internal/database/database"
+	"github.com/freddiemo/events_api/internal/database"
+	"github.com/freddiemo/events_api/models"
 )
 
 type EventRepository interface {
@@ -26,14 +28,26 @@ func (eventRepo *eventRepository) CreateEvent(event *models.Event) error {
 }
 
 func (eventRepo *eventRepository) GetEvents() ([]*models.Event, error) {
-	// Implementation for retrieving events from the database
-	return nil, nil
+	eventsDb, err := eventRepo.db.DB.Query("SELECT * FROM events")
+	if err != nil {
+		log.Println("error getting events")
+		return nil, err
+	}
+	events := []*models.Event{}
+	for eventsDb.Next() {
+		event := &models.Event{}
+		err := eventsDb.Scan(&event.ID)
+		if err != nil {
+			return nil, err
+		}
+		events = append(events, event)
+	}
+	fmt.Println(events)
+
+	return events, nil
 }
 
 func (eventRepo *eventRepository) GetEventByID(id int) (*models.Event, error) {
 	// Implementation for retrieving a single event by ID from the database
 	return nil, nil
 }
-
-
-
